@@ -150,14 +150,14 @@
               (replace-text-f))))))))
 
 (defn paste-text-in-one-block-at-point
-  []
+  [text e html]
   (utils/getClipText
    (fn [clipboard-data]
      (when-let [_ (state/get-input)]
        (let [data (or (when (gp-util/url? clipboard-data)
                         (wrap-macro-url clipboard-data))
                       clipboard-data)]
-         (editor-handler/insert data true))))
+         (paste-copied-blocks-or-text data e html))))
    (fn [error]
      (js/console.error error))))
 
@@ -167,7 +167,7 @@
           (thingatpt/org-admonition&src-at-point input))
     (when-not (mobile-util/native-ios?)
       (util/stop e)
-      (paste-text-in-one-block-at-point))
+      (paste-text-in-one-block-at-point text e nil))
     (paste-copied-blocks-or-text text e html)))
 
 (defn editor-on-paste!
