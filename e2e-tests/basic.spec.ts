@@ -258,8 +258,9 @@ test('Opening a second datepicker should close the first one #7341', async({page
   await block.enterNext();
   await page.click('#main-content-container')
   // Open date picker
-  await page.waitForTimeout(50)
+  await page.waitForTimeout(500)
   await page.click('#main-content-container')
+  await page.waitForTimeout(500)
   await page.click('a:has-text("2000-06-07 Wed").opacity-80')
   await page.waitForTimeout(50)
   await page.click('a:has-text("2000-05-06 Sat").opacity-80')
