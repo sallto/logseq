@@ -948,18 +948,18 @@
 
 (defn- render-macro
   [config name arguments macro-content format]
-  (if macro-content
-    (let [ast (->> (mldoc/->edn macro-content (gp-mldoc/default-config format))
-                   (map first))
-          paragraph? (and (= 1 (count ast))
-                          (= "Paragraph" (ffirst ast)))]
-      (if (and (not paragraph?)
-               (mldoc/block-with-title? (ffirst ast)))
-        [:div
-         (markup-elements-cp (assoc config :block/format format) ast)]
-        (inline-text format macro-content)))
-    [:span.warning {:title (str "Unsupported macro name: " name)}
-     (macro->text name arguments)]))
+  [:div {:class (str "macro " name)}
+   (if macro-content
+     (let [ast (->> (mldoc/->edn macro-content (gp-mldoc/default-config format))
+                    (map first))
+           paragraph? (and (= 1 (count ast))
+                           (= "Paragraph" (ffirst ast)))]
+       (if (and (not paragraph?)
+                (mldoc/block-with-title? (ffirst ast)))
+         (markup-elements-cp (assoc config :block/format format) ast)
+         (inline-text format macro-content)))
+     [:span.warning {:title (str "Unsupported macro name: " name)}
+      (macro->text name arguments)])])
 
 (rum/defc nested-link < rum/reactive
   [config html-export? link]
@@ -2323,6 +2323,7 @@
         (let [title-collapse-enabled? (:outliner/block-title-collapse-enabled? (state/get-config))]
           (when (and (not block-ref-with-title?)
                      (seq body)
+
                      (or (not title-collapse-enabled?)
                          (and title-collapse-enabled? (not collapsed?))))
             [:div.block-body
